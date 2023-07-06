@@ -34,6 +34,24 @@ function createscripts(path_from::String, path_to::String; remove = false)
 end
 
 """
+    createnotebooks(dir; args...)
+
+Create notebooks for each `.jl` script found at `dir`.
+"""
+function createnotebooks(path_from::String, path_to::String; args...)
+    # get input and output paths
+    jls = filter(
+        x -> occursin(r"/[0-9]+-.*\.jl$|/index.jl$", x),
+        readdir(path_from, join = true)
+    )
+    ipynbs = replace.(replace.(jls, path_from => path_to), ".jl" => ".ipynb")
+
+    # create notebooks
+    rm("notebooks", recursive = true, force = true)
+    Literate.notebook.(jls, path_to; args...)
+end
+
+"""
 Merge files inside `folder` path and save in `output` file.
 """
 function mergefolder(folder::String, output::String)
@@ -67,19 +85,6 @@ function copyproject()
 end
 
 
-# function createnotebooks(folder = "scripts")
-#     # get input and output paths
-#     jls = filter(
-#         x -> occursin(r"/[0-9]+-.*\.jl$|/index.jl$", x),
-#         readdir(folder, join = true)
-#     )
-#     ipynbs = replace.(replace.(jls, folder => "notebooks"), ".jl" => ".ipynb")
-#
-#     # create notebooks
-#     rm("notebooks", recursive = true, force = true)
-#     Literate.notebook.(jls, "notebooks", execute = true)
-# end
-
 # # Create markdown files
 # repo_path = "https://github.com/ErickChacon/01-computational-statistics-julia/blob/main"
 # rm(joinpath("docs", "src"), recursive = true, force = true)
@@ -87,6 +92,7 @@ end
 #     repo_root_url = repo_path, credit = false)
 
 export createscripts
+export createnotebooks
 export copyproject
 
 end # module ComposerTools
