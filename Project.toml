@@ -1,0 +1,8 @@
+name = "ComposerTools"
+uuid = "abbe6ace-0ffd-41f7-a06d-de3f4be9244e"
+authors = ["Erick A. Chacón Montalván"]
+version = "0.1.0"
+
+[deps]
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
