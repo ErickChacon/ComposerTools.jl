@@ -47,8 +47,27 @@ function createnotebooks(path_from::String, path_to::String; args...)
     ipynbs = replace.(replace.(jls, path_from => path_to), ".jl" => ".ipynb")
 
     # create notebooks
-    rm("notebooks", recursive = true, force = true)
+    rm(path_to, recursive = true, force = true)
     Literate.notebook.(jls, path_to; args...)
+end
+"""
+    createmarkdowns(path_from, path_to, repo_path)
+
+Create markdown files for each `.jl` script found at `path_from` and save in `path_to`.
+"""
+
+function createmarkdowns(path_from, path_to, repo_path; kwargs...)
+    # get input paths
+    jls = filter(
+        x -> occursin(r"/[0-9]+-.*\.jl$|/index.jl$", x),
+        readdir(path_from, join = true)
+    )
+
+    # create page
+    rm(path_to, recursive = true, force = true)
+    Literate.markdown.(jls, path_to, execute = false, documenter = true,
+        repo_root_url = repo_path, credit = false)
+
 end
 
 """
@@ -84,15 +103,9 @@ function copyproject()
     end
 end
 
-
-# # Create markdown files
-# repo_path = "https://github.com/ErickChacon/01-computational-statistics-julia/blob/main"
-# rm(joinpath("docs", "src"), recursive = true, force = true)
-# Literate.markdown.(jls, joinpath("docs", "src"), execute = true, documenter = true,
-#     repo_root_url = repo_path, credit = false)
-
 export createscripts
 export createnotebooks
+export createmarkdowns
 export copyproject
 
 end # module ComposerTools
